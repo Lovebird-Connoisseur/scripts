@@ -3,3 +3,17 @@
 
 ;; TODO make path relative
 (defconstant +article-directory+ #p"~/Projects/blog/org/en/")
+
+;; TODO make the function operate on a variable sized list of attributes
+(defun get-file-attributes (file)
+  "Takes in a file and returns a list with the desired attributes, including its path."
+  (let ((attributes '()))
+   (with-open-file (stream file)
+     (push file attributes)
+     (loop for line = (read-line stream nil)
+           until (equal line "") ;only reads until the first blank line
+           do (cond ((search "TITLE" line) (push line attributes))
+                    ((search "DATE" line) (push line attributes))
+                    ((search "TAGS" line) (push line attributes))
+                    (t nil))))
+   attributes))
