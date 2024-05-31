@@ -33,3 +33,9 @@
   (dolist (attribute attributes nil)
     (when (and (stringp attribute) (search "#+TITLE: " attribute))
       (return (ppcre:regex-replace "#\\+TITLE: " attribute "")))))
+
+(defun find-date (attributes)
+  "Returns the filename from a list of attributes."
+  (dolist (attribute attributes nil)
+    (when (and (stringp attribute) (search "#+DATE: " attribute))
+      (return (ppcre:regex-replace "[a-z ]*>$" (ppcre:regex-replace ".* <" attribute "") "")))))
