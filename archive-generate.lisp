@@ -17,3 +17,9 @@
                     ((search "TAGS" line) (push line attributes))
                     (t nil))))
    attributes))
+
+(defun generate-file-list (path filter)
+  "Returns a list of all files in a given directory."
+  (let ((file-list (uiop:directory-files path))
+        (filter-function #'(lambda (file) (ppcre:scan filter (file-namestring file)))))
+    (remove-if-not filter-function file-list)))
