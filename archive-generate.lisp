@@ -54,3 +54,19 @@
 
 (defun join-string-list (string-list)
   (format nil "~{~A~^ ~}" string-list))
+
+;; TODO remove underscores in tags, make them link to tag page
+(defun generate-link (attributes)
+  "Given a set of attributes, generate a link to the file."
+  ;; cut till first space, search for #+MATCH, and if so, format it into something pretable
+  (let ((filename (find-filename attributes))
+        (title (find-title attributes))
+        (date (find-date attributes))
+        (tags (join-string-list
+               (mapcar
+                #'(lambda (tag)
+                    (concatenate 'string " [[file:tags/" tag ".org][" "#" tag "]]"))
+                (find-tags attributes)))))
+    (concatenate 'string
+                 "[[file:" filename "][" title "]]" ; ISSUE newline here not working
+                 (string #\newline) (string #\newline) " " date " TAGS:" tags)))
