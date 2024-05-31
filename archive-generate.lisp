@@ -51,3 +51,6 @@
   (dolist (attribute attributes nil)
     (when (pathnamep attribute)
       (return (file-namestring attribute)))))
+
+(defun join-string-list (string-list)
+  (format nil "~{~A~^ ~}" string-list))
