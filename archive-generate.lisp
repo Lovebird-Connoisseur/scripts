@@ -27,3 +27,9 @@
 (defun sort-by* (list criteria)
   "Goes through a list of lists and orders them according to a criteria."
   (sort list #'string<= :key criteria))
+
+(defun find-title (attributes)
+  "Returns the filename from a list of attributes."
+  (dolist (attribute attributes nil)
+    (when (and (stringp attribute) (search "#+TITLE: " attribute))
+      (return (ppcre:regex-replace "#\\+TITLE: " attribute "")))))
