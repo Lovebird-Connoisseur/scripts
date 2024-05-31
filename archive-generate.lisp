@@ -75,3 +75,21 @@
   (with-open-file (f file :direction :output
                           :if-exists :append)
     (format f "~%~a~%" string)))
+
+(defun remove-old-articles (file pattern finish)
+  (with-open-file (f file)
+    (with-open-file (output-stream #p"/tmp/tmp.org"
+                                   :direction :output
+                                   :if-does-not-exist :create
+                                   :if-exists :supersede)
+     (let ((to-delete nil))
+       (loop
+         for line-number from 1
+         for line = (read-line f nil nil)
+         while line
+         when (ppcre:scan pattern line)
+           do (setf to-delete t)
+         unless to-delete
+           do (format output-stream "~a~%" line))
+       (format output-stream "~a~%" finish))))
+  (uiop:copy-file #p"/tmp/tmp.org" file))
