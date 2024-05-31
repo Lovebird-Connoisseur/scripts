@@ -23,3 +23,7 @@
   (let ((file-list (uiop:directory-files path))
         (filter-function #'(lambda (file) (ppcre:scan filter (file-namestring file)))))
     (remove-if-not filter-function file-list)))
+
+(defun sort-by* (list criteria)
+  "Goes through a list of lists and orders them according to a criteria."
+  (sort list #'string<= :key criteria))
