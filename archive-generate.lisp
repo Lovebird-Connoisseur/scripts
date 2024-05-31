@@ -45,3 +45,9 @@
   (dolist (attribute attributes nil)
     (when (and (stringp attribute) (search "#+TAGS: " attribute))
       (return (uiop:split-string (ppcre:regex-replace "#\\+TAGS: " attribute ""))))))
+
+(defun find-filename (attributes)
+  "Returns the filename from a list of attributes."
+  (dolist (attribute attributes nil)
+    (when (pathnamep attribute)
+      (return (file-namestring attribute)))))
