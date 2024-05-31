@@ -93,3 +93,38 @@
            do (format output-stream "~a~%" line))
        (format output-stream "~a~%" finish))))
   (uiop:copy-file #p"/tmp/tmp.org" file))
+
+;; 1. Obtains the list of articles in the +article-directory+.
+;; 2. Goes through each file, obtaining its attributes (e.g. data title and tags).
+;; 3. Orders each file according to its attribute. (in my case I'll use the article date)
+;; 4. Generates a link for each of the files.
+;; 5. Inserts all pre-formated links into index.org and archive.org.
+
+(defun main ()
+  (let ((file-list (generate-file-list +article-directory+ "(?<!index)(?<!archive).org$"))
+        (file-metadata '())
+        (article-links '()))
+    (dolist (file file-list nil)
+      (push (get-file-attributes file) file-metadata))
+    (sort-by* file-metadata #'find-date)
+    (dolist (metadata file-metadata nil)
+      (push (generate-link metadata) article-links))
+    (remove-old-articles (merge-pathnames
+                          +article-directory+
+                          #p"index.org")
+                         "\\* Posts" "* Posts")
+    (remove-old-articles (merge-pathnames
+                          +article-directory+
+                          #p"archive.org")
+                         "\\* Posts" "* Posts")
+    (dolist (article article-links nil)
+      (embedd-string (merge-pathnames
+                      +article-directory+
+                      #p"index.org")
+                     article)
+      (embedd-string (merge-pathnames
+                      +article-directory+
+                      #p"archive.org")
+                     article))))
+
+(main)
