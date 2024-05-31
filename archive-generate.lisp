@@ -70,3 +70,8 @@
     (concatenate 'string
                  "[[file:" filename "][" title "]]" ; ISSUE newline here not working
                  (string #\newline) (string #\newline) " " date " TAGS:" tags)))
+
+(defun embedd-string (file string)
+  (with-open-file (f file :direction :output
+                          :if-exists :append)
+    (format f "~%~a~%" string)))
