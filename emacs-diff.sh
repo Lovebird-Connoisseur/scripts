@@ -1,3 +1,3 @@
 #!/bin/sh
 
-emacs -eval "(ediff-files \"$1\" \"$2\")"
+emacsclient --create-frame --alternative-editor="" --eval "(ediff-files \"$1\" \"$2\")"
