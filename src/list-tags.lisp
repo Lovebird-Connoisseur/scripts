@@ -23,6 +23,16 @@
 
 ;; ISSUE: What about files with things inside square brackets that are NOT tags (ex: youtube-dl files)
 ;; NOTE: Tag format [TYPE1=TAG1, TYPE2=TAG2, TAG3]
+;; ISSUE: Parse tag subgroups as assocs
+
+;; NOTE: Is there a way to not match '=' but to not capture it?
+(defun parse-tags (tags)
+  "Given a files tags field, returns an association of (TYPE . VALUE)."
+  (mapcar #'(lambda (entry)
+              (ppcre:register-groups-bind (type value)
+                  ("^(.*=)?(.*)$" entry)
+                (cons type value)))
+          (get-tags tags)))
 
 ;; TODO: Refactor
 ;; ISSUE: Not recursive
