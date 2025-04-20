@@ -1,9 +1,11 @@
-;; TODO: Improve regex expressions
+;; TODO: Add type information & optimize
+;; TODO: Add error checking
 ;; TODO: Make this a package/system
 ;; TODO: Create procedures to..
 ;; Set tags
 ;; Delete Tags
 ;; Filter tags (date intervals, type, value, etc...)
+;; TODO: a files tags field -> *better name*
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (ql:quickload '(:cl-ppcre) :silent t))
@@ -21,7 +23,6 @@
       t
       nil))
 
-;; ISSUE: What about files with things inside square brackets that are NOT tags (ex: youtube-dl files)
 ;; NOTE: Tag format [TYPE1=TAG1, TYPE2=TAG2, TAG3]
 ;; ISSUE: Parse tag subgroups as assocs
 
