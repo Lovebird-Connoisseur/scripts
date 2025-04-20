@@ -8,6 +8,13 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (ql:quickload '(:cl-ppcre) :silent t))
 
+;; ISSUE: Not portable
+(defun get-file-attributes (file)
+  "Returns a list containing a files PATH, TAGS and NAME."
+  (ppcre:register-groups-bind (path tags filename)
+      ("(.*/)*(\\[.*\\])? ?(.*)$" file)
+    (list path tags filename)))
+
 (defun tagged-p (file)
   (if (ppcre:scan "^\\[.*\\] " (get-filename-full file))
       t
@@ -32,8 +39,10 @@
   (ppcre:scan-to-strings "([^/]*$)" filepath))
 
 (defun main ()
-  (loop for filepath in (cdr sb-ext:*posix-argv*)
-        do (let ((file (get-filename-full filepath)))
-             (format t "~&Name: ~a" (get-filename file))
-             (loop for tag in (get-tags file)
+  (loop for file in (cdr sb-ext:*posix-argv*)
+        do (let ((path (first (get-file-attributes file)))
+                 (tags (second (get-file-attributes file)))
+                 (filename (third (get-file-attributes file))))
+             (format t "~&Name: ~a" filename)
+             (loop for tag in (get-tags tags)
                    do (format t "~&~a" tag)))))
