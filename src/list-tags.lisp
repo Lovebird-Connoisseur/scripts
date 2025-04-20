@@ -16,7 +16,8 @@
     (list path tags filename)))
 
 (defun tagged-p (file)
-  (if (ppcre:scan "^\\[.*\\] " (get-filename-full file))
+  "Returns T if the file contains a tag field."
+  (if (second (get-file-attributes file))
       t
       nil))
 
