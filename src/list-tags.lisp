@@ -22,15 +22,30 @@
       nil))
 
 ;; ISSUE: What about files with things inside square brackets that are NOT tags (ex: youtube-dl files)
-;; TODO: Add support for tag types
-;; TODO: Add support for tag sets as tag values (i.e. AUTHOR=[AuthorA, AuthorB])
-;; TODO: Make types optional?
 ;; NOTE: Tag format [TYPE1=TAG1, TYPE2=TAG2, TAG3]
-(defun get-tags (file)
-  "Returns the list of tags assossiated with FILE."
-  (let ((tag-list (ppcre:scan-to-strings "^\\[.*\\]" file)))
-    (ppcre:split "," (ppcre:regex-replace "\\]$" (ppcre:regex-replace "^\\[" tag-list "") ""))))
 
+;; TODO: Refactor
+;; ISSUE: Not recursive
+(defun get-tags (tags)
+  "Given a files tags field, returns a list of individual tags."
+  (let ((tags (subseq tags 1 (- (length tags) 1)))
+        (depth 0)
+        (ch nil)
+        (word "")
+        (result '()))
+    (loop for i from 0 to (- (length tags) 1)
+          do (setf ch (char tags i))
+             (cond ((and (equalp ch #\,) (eql depth 0))
+                    (push word result)
+                    (setf word ""))
+                   ((equalp ch #\[)
+                    (setf depth (+ depth 1))
+                    (setf word (concatenate 'string word (list ch))))
+                   ((equalp ch #\])
+                    (setf depth (- depth 1))
+                    (setf word (concatenate 'string word (list ch))))
+                   (t (setf word (concatenate 'string word (list ch))))))
+    (reverse result)))
 
 (defun main ()
   (loop for file in (cdr sb-ext:*posix-argv*)
